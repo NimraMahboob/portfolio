@@ -4,24 +4,32 @@ import Layout from '../components/layout'
 import Seo from '../components/seo'
 
 function Blog({ data }) {
-  const nodes = data.allFile.nodes
+  const nodes = data.allMdx.nodes
 
   return (
     <Layout pageTitle='My Blog Posts'>
-      <ul>
-        {nodes.map((node) => (
-          <li key={node.name}>{node.name}</li>
+      {nodes.map((node) => (
+          <article key={node.id}>
+            <h2>{node.frontmatter.title}</h2>
+            <p>{node.frontmatter.date}</p>
+            <p>{node.excerpt}</p>
+          </article>
         ))}
-      </ul>
     </Layout>
   )
 }
 
 export const query = graphql`
-query MyQuery {
-  allFile(filter: {sourceInstanceName: {eq: "blog"}}) {
+query {
+  allMdx(sort: {frontmatter: {date: DESC}}) {
     nodes {
-      name
+      frontmatter {
+        date(formatString: "MMMM DD, YYYY")
+        slug
+        title
+      }
+      excerpt
+      id
     }
   }
 }
